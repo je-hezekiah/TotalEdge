@@ -29,7 +29,7 @@ def run_test():
         score_defense(111.5, 112.0, 113.5),
         score_rest(3, 3, False, False),
         score_home_away(124, 114, 119, 110, True),
-        score_injuries(2, 7.0),
+        score_injuries(7.0),
         score_matchup(238.0, 224.0, "fast")
     ]
 
