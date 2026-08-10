@@ -65,3 +65,47 @@ def score_rest(team_a_rest_days: int, team_b_rest_days: int, team_a_b2b: bool, t
     if team_a_rest_days >= 3 and team_b_rest_days >= 3:
         return FactorResult("Rest", Signal.OVER, 0.4, 1.15, "Both teams well rested")
     return FactorResult("Rest", Signal.NEUTRAL, 0.0, 1.15, "Normal rest situation")
+
+def score_home_away(team_a_home_ppg: float, team_a_away_ppg: float,
+                    team_b_home_ppg: float, team_b_away_ppg: float,
+                    is_team_a_home: bool) -> FactorResult:
+    if is_team_a_home:
+        home_scoring = team_a_home_ppg + team_b_away_ppg
+        away_scoring = team_a_away_ppg + team_b_home_ppg
+    else:
+        home_scoring = team_b_home_ppg + team_a_away_ppg
+        away_scoring = team_b_away_ppg + team_a_home_ppg
+
+    diff = home_scoring - away_scoring
+
+    if diff >= 6:
+        return FactorResult("Home/Away", Signal.OVER, min(diff / 12, 1.0), 1.0, "Strong home scoring environment")
+    elif diff <= -6:
+        return FactorResult("Home/Away", Signal.UNDER, min(abs(diff) / 12, 1.0), 1.0, "Weak home scoring environment")
+    return FactorResult("Home/Away", Signal.NEUTRAL, 0.0, 1.0, "Normal home/away effect")
+
+def score_injuries(key_players_out: int, impact_score: float) -> FactorResult:
+    """
+    impact_score: estimated points effect on the total
+    Positive = more points expected (missing defender)
+    Negative = fewer points expected (missing scorer)
+    """
+    if impact_score >= 4.5:
+        return FactorResult("Injuries", Signal.OVER, min(impact_score / 8, 1.0), 1.4, f"Missing key defenders (+{impact_score:.1f})")
+    elif impact_score <= -4.5:
+        return FactorResult("Injuries", Signal.UNDER, min(abs(impact_score) / 8, 1.0), 1.4, f"Missing key scorers ({impact_score:.1f})")
+    return FactorResult("Injuries", Signal.NEUTRAL, 0.0, 1.4, "No major injury impact")
+
+def score_matchup(h2h_avg_total: float, league_avg_total: float, style_clash: str = "neutral") -> FactorResult:
+    diff = h2h_avg_total - league_avg_total
+
+    if style_clash == "fast":
+        return FactorResult("Matchup", Signal.OVER, 0.65, 1.05, "Style favors high scoring")
+    if style_clash == "slow":
+        return FactorResult("Matchup", Signal.UNDER, 0.65, 1.05, "Style favors low scoring")
+
+    if diff >= 5:
+        return FactorResult("Matchup", Signal.OVER, min(diff / 10, 1.0), 1.05, f"H2H averages high ({h2h_avg_total:.1f})")
+    elif diff <= -5:
+        return FactorResult("Matchup", Signal.UNDER, min(abs(diff) / 10, 1.0), 1.05, f"H2H averages low ({h2h_avg_total:.1f})")
+    return FactorResult("Matchup", Signal.NEUTRAL, 0.0, 1.05, "Neutral matchup history")
