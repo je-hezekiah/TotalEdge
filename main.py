@@ -4,6 +4,7 @@ from core.factors import (
     score_rest, score_home_away, score_injuries, score_matchup
 )
 from core.confidence import make_decision
+from core.tracker import log_prediction, show_performance
 
 def run_test():
     print("=== TotalEdge Test ===\n")
@@ -33,7 +34,6 @@ def run_test():
         score_matchup(238.0, 224.0, "fast")
     ]
 
-    # Temporarily lower min_edge for testing
     result = make_decision(projected, market_total, factors)
 
     print(f"Projected Total : {projected}")
@@ -47,6 +47,20 @@ def run_test():
         print(f"Agreeing        : {', '.join(result['agreeing_factors'])}")
     
     print(f"\nReason: {result['reason']}")
+
+    # Log the prediction
+    if result["decision"] != "NO BET":
+        log_prediction(
+            home_team="Team A",
+            away_team="Team B",
+            projected=projected,
+            market=market_total,
+            decision=result["decision"],
+            confidence=result["confidence"],
+            tier=result["tier"],
+            edge=result["edge"],
+            agreeing_factors=result["agreeing_factors"]
+        )
 
 if __name__ == "__main__":
     run_test()

@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "timestamp": "2026-08-10T19:34:42.821611",
+    "league": "NBA",
+    "home_team": "Team A",
+    "away_team": "Team B",
+    "projected": 236.6,
+    "market": 219.5,
+    "edge": 17.1,
+    "decision": "OVER",
+    "confidence": 96,
+    "tier": "Extremely Strong",
+    "agreeing_factors": [
+      "Pace",
+      "Recent Scoring",
+      "Offense",
+      "Injuries",
+      "Matchup"
+    ],
+    "result": null,
+    "actual_total": null,
+    "hit": null,
+    "notes": ""
+  }
+]
